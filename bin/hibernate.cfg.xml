@@ -1,0 +1,16 @@
+<hibernate-configuration>
+	<session-factory>
+		<property name="connection.driver_class">com.mysql.jdbc.Driver</property>
+		<property name="connection.url">jdbc:mysql://127.0.0.1:3306/vet</property>
+		<property name="connection.username">ausias</property>
+		<property name="connection.password">ausias</property>
+		<property name="connection.pool_size">1</property>
+		<property name="dialect">org.hibernate.dialect.MySQL57Dialect</property>
+		<property name="show_sql">true</property>
+		<property name="hbm2ddl.auto">create</property>
+		<mapping class="entitats.Localitzacio"></mapping>
+		<mapping class="entitats.Gabia"></mapping>
+		<mapping class="entitats.Persona"></mapping>
+		<mapping class="entitats.Mascota"></mapping>
+	</session-factory>
+</hibernate-configuration>
