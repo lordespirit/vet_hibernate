@@ -12,6 +12,7 @@ import org.hibernate.Session;
 
 import dao_int.HibernateUtils;
 import dao_int.MascotaDAO;
+import entitats.Localitzacio;
 import entitats.Mascota;
 import entitats.Persona;
 
@@ -141,6 +142,36 @@ public class MascotaDAOImplementacio implements MascotaDAO {
 	@Override
 	public void close() {
 		session.close();				
+	}
+
+	@Override
+	public List<Mascota> mascotesClientDNI(String dni) {
+		
+		Persona persona;
+		PersonaDAOImplementacio p = new PersonaDAOImplementacio();
+		persona = p.findByDni(dni);
+			
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		CriteriaQuery<Mascota> criteria = builder.createQuery(Mascota.class);
+		Root<Mascota> root = criteria.from(Mascota.class);
+		criteria.select(root).where(builder.equal(root.get("persona"), persona));
+			
+		return session.createQuery(criteria).getResultList();
+	}
+
+	@Override
+	public void update(int id, String nom, int alcada, int ample, Persona persona) {
+		session.beginTransaction();
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		CriteriaUpdate<Mascota> update = builder.createCriteriaUpdate(Mascota.class);
+		Root<Mascota> root = update.from(Mascota.class);
+		update.set("alt", alcada);
+		update.set("ample", ample);
+		update.set("persona", persona);
+		update.where(builder.equal(root.get("id"), id));
+		
+		session.createQuery(update).executeUpdate();
+		session.getTransaction().commit();
 	}
 
 }

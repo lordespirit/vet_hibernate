@@ -15,7 +15,9 @@ public interface MascotaDAO {
 	public List<Mascota> mesAmpleQue(int ample);
 	public List<Mascota> menysAmpleQue(int ample);
 	public List<Mascota> mascotesClient(Persona persona);
+	public List<Mascota> mascotesClientDNI(String dni);
 
+	public void update(int id, String nom, int alcada, int ample, Persona persona);
 	
 	public void save(Mascota mascota);
 	public void updateNom(int id,String nom);

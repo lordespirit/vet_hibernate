@@ -6,10 +6,6 @@ import javax.persistence.*;
 @Table(name="MASCOTA")
 public class Mascota {
 
-
-	/**
-	 * Constructor
-	 */
 	public Mascota() {}
 	
 	public Mascota(int ample, int alt, String nom, Gabia gabia, Persona persona) {
@@ -41,6 +37,54 @@ public class Mascota {
 	   @ManyToOne
 	   @JoinColumn(name="DNI_PERSONA")
 	   private Persona persona;
+	   
+	   public int getId() {
+			return id;
+		}
+
+		public void setId(int id) {
+			this.id = id;
+		}
+
+		public int getAmple() {
+			return ample;
+		}
+
+		public void setAmple(int ample) {
+			this.ample = ample;
+		}
+
+		public int getAlt() {
+			return alt;
+		}
+
+		public void setAlt(int alt) {
+			this.alt = alt;
+		}
+
+		public String getNom() {
+			return nom;
+		}
+
+		public void setNom(String nom) {
+			this.nom = nom;
+		}
+
+		public Gabia getGabia() {
+			return gabia;
+		}
+
+		public void setGabia(Gabia gabia) {
+			this.gabia = gabia;
+		}
+
+		public Persona getPersona() {
+			return persona;
+		}
+
+		public void setPersona(Persona persona) {
+			this.persona = persona;
+		}
 	   
 	   @Override
 		public String toString(){

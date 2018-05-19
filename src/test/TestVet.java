@@ -2,18 +2,15 @@ package test;
 
 import static org.junit.Assert.*;
 
+import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
-
-import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.FixMethodOrder;
 import org.junit.Test;
-
 import dao_implementacio.GabiaDAOImplementacio;
 import dao_implementacio.LocalitzacioDAOImplementacio;
 import dao_implementacio.MascotaDAOImplementacio;
@@ -22,18 +19,32 @@ import entitats.Gabia;
 import entitats.Localitzacio;
 import entitats.Mascota;
 import entitats.Persona;
-
-import org.junit.FixMethodOrder;
-import org.junit.Test;
 import org.junit.runners.MethodSorters;
+import static org.hamcrest.CoreMatchers.*;
+import static org.hamcrest.MatcherAssert.assertThat;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class TestVet {
+	
+	private static LocalitzacioDAOImplementacio l	= new LocalitzacioDAOImplementacio();
+	private static PersonaDAOImplementacio p		= new PersonaDAOImplementacio();
+	private static MascotaDAOImplementacio m		= new MascotaDAOImplementacio();
+	private static GabiaDAOImplementacio g			= new GabiaDAOImplementacio();
+	
+	public static void open(){
+		l = new LocalitzacioDAOImplementacio();
+		p = new PersonaDAOImplementacio();
+		m = new MascotaDAOImplementacio();
+		g = new GabiaDAOImplementacio();
+	}
+	
+	public static void close(){
+		l.close();
+		p.close();
+		m.close();
+		g.close();
+	}
 
-	private static LocalitzacioDAOImplementacio l = new LocalitzacioDAOImplementacio();
-	private static PersonaDAOImplementacio p = new PersonaDAOImplementacio();
-	private static MascotaDAOImplementacio m = new MascotaDAOImplementacio();
-	private static GabiaDAOImplementacio g = new GabiaDAOImplementacio();
 	
 	@Test
 	public void testA_Gabia() {
@@ -65,11 +76,12 @@ public class TestVet {
 		// Amb el esborrat, ara tenim 4
 		gabies = g.findAll();
 		Assert.assertEquals(4, gabies.size());	
+		
 	}
 	
 	@Test
 	public void testB_Persona() {
-	
+			
 		List<Persona> persona;
 		Persona personaInd;
 		
@@ -102,8 +114,7 @@ public class TestVet {
 		// Ara comprovem com existeix un usuari amb aquest nom
 		persona = p.findByNameSurname("Eduard","Valles");
 		Assert.assertEquals(1, persona.size());
-		
-		
+				
 		// Afegim una nova persona
 		Persona novaPersona = new Persona("12987452A", "Marcel", "Lopez");
 		p.save(novaPersona);
@@ -143,7 +154,7 @@ public class TestVet {
 
 	@Test
 	public void testC_Mascota() {
-	
+			
 		List<Mascota> mascotes;
 		Mascota mascotaInd;
 		
@@ -155,13 +166,50 @@ public class TestVet {
 		// Busquem la mascota Felix
 		mascotes = m.findByNom("Felix");
 		// Tenim una mascota amb aquest nom
-		Assert.assertEquals(1, mascotes.size());	
+		Assert.assertEquals(1, mascotes.size());
 		
-	}
+		// Busquem les mascotas del client (en té 2)
+		mascotes = m.mascotesClientDNI("12563413Y");
+		// Comprovem que son 2
+		Assert.assertEquals(2, mascotes.size());
+		
+		// Anem a buscar les mascotes més amples que 2
+		mascotes = m.mesAmpleQue(2);
+		// Només n'hi ha 1, que es de 3
+		Assert.assertEquals(1, mascotes.size());
+		
+		// Anem a buscar les mascotes menys ample que 3
+		mascotes = m.menysAmpleQue(3);
+		// Només n'hi ha 3
+		Assert.assertEquals(3, mascotes.size());
+		
+		// Anem a buscar les mascotes mes baixes que 4
+		mascotes = m.mesBaixQue(4);
+		// Només n'hi ha 4, totes
+		Assert.assertEquals(4, mascotes.size());
+		
+		// Anem a fer un update, una mascota ara té una mida diferent
+		// I pertany a la persona amb dni 01232342Q
+		Persona persona = p.findByDni("01232342Q");
+		// La mascota 3 "T-REX" té una nova alçada de 9 metres i ample de 4
+		m.update(3, "T-REX", 9, 4, persona);
+		
+		// Tornem a obtindre les dades després del update
+		close();
+		open();
+	
+		// Tornem a obtindre les dades per aquesta mascota
+		mascotaInd = m.findById(3);
+		Assert.assertEquals("T-REX", mascotaInd.getNom());
+		Assert.assertEquals(4, mascotaInd.getAmple());
+		Assert.assertEquals(9, mascotaInd.getAlt());
+		Assert.assertEquals("01232342Q", mascotaInd.getPersona().getDni());
+
+		}
 	
 	@Test
 	public void testD_Localitzacio() {
-	
+			
 		List<Localitzacio> localitzacions;
 		Localitzacio loc;
 		
@@ -171,17 +219,52 @@ public class TestVet {
 		localitzacions = l.findAll();
 		Assert.assertEquals(6, localitzacions.size());	
 		
-	}	
+		//Comprovem, de les localitzacions de Barcelona
+		// Que un té el telefon 666666666
+		localitzacions = l.findByCiutat("Barcelona");
+		List<Localitzacio> expected = new ArrayList<Localitzacio>();
+		
+		// Agafem els mateixos objetos per afegir al expected
+		Localitzacio loccopy1 = new Localitzacio(8028, "Avinguda Madrid 40", "Pis quart, porta dos", "Barcelona","Espanya", 666666666);
+		Localitzacio loccopy2 = new Localitzacio(8029, "Passeig de Sant Juan", "sense número", "Barcelona","Espanya", 45957854);
+		expected.add(loccopy1);
+		expected.add(loccopy2);
+
+		// Comprovem que tenen el mateix telefon, carrer i codi postal
+		assertThat(localitzacions.get(0).getTelefon(), is(expected.get(0).getTelefon()));
+		assertThat(localitzacions.get(0).getCarrer(), is(expected.get(0).getCarrer()));
+		assertThat(localitzacions.get(0).getCodi_postal(), is(expected.get(0).getCodi_postal()));
 	
+		assertThat(localitzacions.get(1).getTelefon(), is(expected.get(1).getTelefon()));
+		assertThat(localitzacions.get(1).getCarrer(), is(expected.get(1).getCarrer()));
+		assertThat(localitzacions.get(1).getCodi_postal(), is(expected.get(1).getCodi_postal()));
+		
+		// Cerquem la loalitzacio amb id 4
+		loc = l.findById(4);
+		// Dades que té Calle Mejia 12 Girona 4000 bla bla 1 Espanya 14253674
+		Assert.assertEquals(4000, loc.getCodi_postal());	
+		Assert.assertEquals("Calle Mejia 12", loc.getCarrer());	
+		Assert.assertEquals("bla bla 1", loc.getInfo_adicional());	
+		
+		// Anem a canviar les dades de informació addicional
+		l.updateInfo(4, "Client VIP");
+		
+		// Tornem a obtindre les dades, primer tanquem sessió
+		close();
+		open();
+		
+		loc = l.findById(4);		
+		// I comprovem que sigui aixi
+		Assert.assertEquals("Client VIP", loc.getInfo_adicional());	
 	
-	
+	}
 	
 	/**
 	 * Mètode que carrega un cop abans del test per carregar les dades inicials
 	 */
 	@BeforeClass
 	public static void insercions(){
-		
+				
 		Localitzacio loc1 = new Localitzacio(8028, "Avinguda Madrid 40", "Pis quart, porta dos", "Barcelona","Espanya", 666666666);
 		Localitzacio loc2 = new Localitzacio(8029, "Passeig de Sant Juan", "sense número", "Barcelona","Espanya", 45957854);
 		Localitzacio loc3 = new Localitzacio(3000, "Carrer Major 31", "7e 4t", "Lleida","Espanya", 758654545);
@@ -253,17 +336,7 @@ public class TestVet {
 		m.save(mascota2);
 		m.save(mascota3);
 		m.save(mascota4);
-		
-		
-		
-	}
-	
-	@AfterClass
-	public static void tancar(){
-		l.close();
-		p.close();
-		m.close();
-		g.close();
+				
 	}
 
 }
