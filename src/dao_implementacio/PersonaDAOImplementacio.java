@@ -82,6 +82,7 @@ public class PersonaDAOImplementacio implements PersonaDAO {
 		update.where(builder.equal(root.get("dni"), dni));
 		
 		session.createQuery(update).executeUpdate();
+		session.flush();
 		session.getTransaction().commit();		
 	}
 
@@ -101,6 +102,16 @@ public class PersonaDAOImplementacio implements PersonaDAO {
 	@Override
 	public void close() {
 		session.close();		
+	}
+
+	@Override
+	public List<Persona> findByName(String name) {
+		CriteriaBuilder builder = session.getCriteriaBuilder();
+		CriteriaQuery<Persona> criteria = builder.createQuery(Persona.class);
+		Root<Persona> root = criteria.from(Persona.class);
+		criteria.select(root).where(builder.equal(root.get("nom"), name));
+			
+		return session.createQuery(criteria).getResultList();
 	}
 
 }

@@ -6,6 +6,23 @@ import javax.persistence.*;
 @Table(name="GABIA")
 public class Gabia {
 
+	public Gabia(){};
+	
+	public Gabia(int mida, int pis) {
+		this.mida=mida;
+		this.pis=pis;
+	}
+
+   @Id
+   @Column(name = "ID") @GeneratedValue(strategy=GenerationType.IDENTITY)
+   private int id;
+
+   @Column(name = "MIDA")
+   private int mida;
+
+   @Column(name = "PIS")
+	   private int pis;
+
 	public int getId() {
 		return id;
 	}
@@ -23,26 +40,6 @@ public class Gabia {
 	}
 	public void setPis(int pis) {
 		this.pis = pis;
-	}
-	/**
-	 * Constructor
-	 */
-	public Gabia(){};
-	public Gabia(int mida, int pis) {
-		this.mida=mida;
-		this.pis=pis;
-	}
-	
-	   @Id
-	   @Column(name = "ID") @GeneratedValue(strategy=GenerationType.IDENTITY)
-	   private int id;
-	
-	   @Column(name = "MIDA")
-	   private int mida;
-	
-	   @Column(name = "PIS")
-	   private int pis;
-	   
-	   
+	}   
 	
 }

@@ -8,6 +8,33 @@ import javax.persistence.*;
 @Entity
 @Table(name="PERSONA")
 public class Persona {
+
+	/**
+	 * Constructor
+	 */
+	public Persona() {}
+	
+	public Persona(String dni, String nom, String cognom){
+		this.dni=dni;
+		this.nom=nom;
+		this.cognom=cognom;
+	}
+	
+	@Id
+	@Column(name = "DNI")
+	private String dni;
+	
+	@Column(name = "NOM")
+	private String nom;
+	
+	@Column(name = "COGNOM")
+	private String cognom;
+   
+	@ManyToMany(cascade=CascadeType.ALL)  
+	@JoinTable(name="localitzacions_persones", joinColumns={@JoinColumn(name="DNI_PERSONA")},
+	inverseJoinColumns={@JoinColumn(name="ID_LOCALITZACIO")})  
+	@JoinColumn(name="ID_LOCALITZACIO")
+	private Set<Localitzacio> localitzacio = new LinkedHashSet();
 	
 	public String getDni() {
 		return dni;
@@ -40,33 +67,6 @@ public class Persona {
 	public void setLocalitzacio(Set<Localitzacio> localitzacio) {
 		this.localitzacio = localitzacio;
 	}
-
-	/**
-	 * Constructor
-	 */
-	public Persona() {}
-	
-	public Persona(String dni, String nom, String cognom){
-		this.dni=dni;
-		this.nom=nom;
-		this.cognom=cognom;
-	}
-	
-	@Id
-	@Column(name = "DNI")
-	private String dni;
-	
-	@Column(name = "NOM")
-	private String nom;
-	
-	@Column(name = "COGNOM")
-	private String cognom;
-   
-	@ManyToMany(cascade=CascadeType.ALL)  
-	@JoinTable(name="localitzacions_persones", joinColumns={@JoinColumn(name="DNI_PERSONA")},
-	inverseJoinColumns={@JoinColumn(name="ID_LOCALITZACIO")})  
-	@JoinColumn(name="ID_LOCALITZACIO")
-	private Set<Localitzacio> localitzacio = new LinkedHashSet();
 	
 	@Override
 	public String toString(){

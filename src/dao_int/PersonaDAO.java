@@ -9,7 +9,7 @@ public interface PersonaDAO {
 	public Persona findByDni(String dni);
 	public List<Persona> findByNameSurname(String name, String surname);
 	public List<Persona> findBySurname(String surname);
-	
+	public List<Persona> findByName(String name);
 	public void save(Persona persona);
 	public void updateName(String dni,String nom, String cognom);
 	public void delete(String dni);

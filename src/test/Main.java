@@ -1,7 +1,5 @@
-package main;
+package test;
 
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -41,13 +39,15 @@ public class Main {
 		Persona persona4 = new Persona("01232342Q", "Mar", "Mar");
 		Persona persona5 = new Persona("63434233M", "Pol", "Pol");
 		
-		// Creem la variable localitzacions
+		// Creem la variable localitzacions amb un SET, la SET localització P1 té dos localitzacions
 		Set<Localitzacio> localitzacionsP1 = new LinkedHashSet();
 		localitzacionsP1.add(loc1); // Té casa a Barcelona
 		localitzacionsP1.add(loc4); // Té segona residència a Girona
-		// Fem el set de localitzacions a la persona 1
+		
+		// Afegim aquest SET de localitzacions a la persona 1
 		persona1.setLocalitzacio(localitzacionsP1);
 		
+		// Fem els següents casos amb els altres llocs
 		Set<Localitzacio> localitzacionsP2 = new LinkedHashSet();
 		localitzacionsP2.add(loc2);
 		persona2.setLocalitzacio(localitzacionsP2);
